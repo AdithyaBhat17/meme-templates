@@ -4,7 +4,7 @@
       <div class="row masonry-grid">
         <div class="col-md-4 col-sm-12 masonry-column" v-bind:key="meme.id" v-for="meme in templates">
           <div>
-            <a @click.prevent="downloadTemplate(meme.url, meme.name)" href="javascript:void(0)" class="thumbnail">
+            <a @click="downloadTemplate(meme.url, meme.name)" href="javascript:void(0)" class="thumbnail" download>
               <img :src="meme.url" v-bind:alt="meme.name">
               <span>{{meme.name}}</span>
             </a>
@@ -38,12 +38,15 @@ export default {
     downloadTemplate(image, name) {
       fetch(image)
       .then(response => response.blob())
-      .then(({ data }) => {
-        let blob = new Blob([data], { type: 'image/png' })
-        let link = document.createElement('a')
-        link.href = window.URL.createObjectURL(blob)
-        link.download = name + '.png'
-        link.click()
+      .then((blob) => {
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) // for IE
+           window.navigator.msSaveOrOpenBlob(blob, name)
+        else {
+          let a = document.createElement('a')
+          a.href = URL.createObjectURL(blob)
+          a.download = name
+          a.click()
+        }
       })
     }
   }
