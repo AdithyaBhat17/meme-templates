@@ -1,10 +1,11 @@
 <template>
   <div id="app">
     <div class="container">
+      <Navbar />
       <div class="row masonry-grid">
         <div class="col-md-4 col-sm-12 masonry-column" v-bind:key="meme.id" v-for="meme in templates">
           <div>
-            <a @click="downloadTemplate(meme.url, meme.name)" href="javascript:void(0)" class="thumbnail" download>
+            <a @click="downloadTemplate(meme.url, meme.name)" href="javascript:void(0)" download>
               <img :src="meme.url" v-bind:alt="meme.name">
               <span>{{meme.name}}</span>
             </a>
@@ -12,11 +13,12 @@
         </div>
       </div>
     </div>
-    <!-- <router-view/> -->
   </div>
 </template>
 
 <script>
+import Navbar from './components/Nav'
+
 export default {
   name: 'App',
   data() {
@@ -28,6 +30,11 @@ export default {
   created() {
     this.fetchData()
   },
+
+  components: {
+    Navbar
+  },
+
   methods: {
     fetchData() {
       fetch('https://api.imgflip.com/get_memes')
@@ -35,6 +42,7 @@ export default {
       .then(templates => this.templates = templates.data.memes)
       .then(this.loading = false)
     },
+
     downloadTemplate(image, name) {
       fetch(image)
       .then(response => response.blob())
@@ -60,14 +68,13 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 img {
   width: 100%;
   height: 300px;
   object-fit: contain;
   margin-top: 25px;
-  box-shadow: 5px 5px 25px 0 rgba(0, 0, 0, 0.04);
   border-radius: 5px;
 }
 </style>
